@@ -8,9 +8,38 @@ import shutil
 from object_detection.utils import dataset_util
 
 
+
+
+bosh_data = "bosh-data"
+data_folder = "dataset_train_rgb"
+yaml_file = "train.yaml"
+
+results = "aresults_test/train.record"
+
+
 flags = tf.app.flags
-flags.DEFINE_string('output_path', './results/bosh.record', 'Path to output TFRecord')
+flags.DEFINE_string('output_path', results, 'Path to output TFRecord')
 FLAGS = flags.FLAGS
+
+def check_file_names():
+
+    #create results directory if absent
+    result_dir = os.path.dirname(results)
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
+
+    #if results exist just stop so wee do not override previous work
+    if os.path.exists(results):
+        raise Exception(results, 'allready exists. Please delete and try agin!')
+
+
+    #check the bos-data directory
+    if not os.path.exists(bosh_data):
+        raise Exception (bosh_data, "directory is missing please download and then continue")
+
+
+
+
 
 LABEL_DICT =  {
     "Green" : 1,
@@ -28,8 +57,10 @@ LABEL_DICT =  {
     "RedStraightLeft" : 13,
     "RedStraightRight" : 14
     }
-INPUT_YAML = "bosh-data/dataset_test_rgb/test.yaml"
-PATO_TO_IMAGES = "bosh-data/dataset_test_rgb/rgb/test/"
+INPUT_YAML = bosh_data+'/'+data_folder+'/'+ yaml_file
+
+#used only for training. the path inside yaml file are scrambled
+#PATO_TO_IMAGES = "bosh-data/dataset_test_rgb/rgb/test/"
 
 def create_tf_example(example):
 
@@ -37,9 +68,11 @@ def create_tf_example(example):
     height = 720 # Image height
     width = 1280 # Image width
 
-    temppath = example['path'] # Filename of the image. Empty if image is not from file
-    basename = ntpath.basename(temppath)
-    filename = PATO_TO_IMAGES + basename
+    #temppath = example['path'] # Filename of the image. Empty if image is not from file
+    #basename = ntpath.basename(temppath)
+    #filename = PATO_TO_IMAGES + basename
+
+    filename = example['path'] # Filename of the image. Empty if image is not from file
 
     if not os.path.exists(filename):
         raise Exception("file not found: " + filename)
@@ -90,23 +123,9 @@ def create_tf_example(example):
 
 
 def main(_):
-    results_directory = "results";
-    bosh_data = "bosh-data"
+    check_file_names()
 
-    #reset results directory
-    if os.path.exists(results_directory):
-        shutil.rmtree(results_directory)
-    os.makedirs(results_directory)
-
-    #check the bos-data directory
-    if not os.path.exists(bosh_data):
-        raise Exception ("bosh-data directory is missing please download and then continue")
-
-
-    print (FLAGS.output_path)
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
-
-    # BOSCH
 
     examples = yaml.load(open(INPUT_YAML, 'rb').read())
 
