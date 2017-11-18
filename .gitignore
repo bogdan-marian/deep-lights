@@ -1,3 +1,5 @@
 .ipynb_checkpoints/
 bosh-data/
 results/
+temp/
+training/data/train.record
