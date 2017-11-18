@@ -17,11 +17,13 @@ from object_detection.utils import dataset_util
 
 #the fist folder from INPUT_YAML needs to exist in the curent folder
 #the 'bosh-data' folder is ignored by gitingore
-#INPUT_YAML = "bosh-data/dataset_train_rgb/train.yaml"
-INPUT_YAML = "bosh-data/dataset_test_rgb/test.yaml"
+INPUT_YAML = "bosh-data/dataset_train_rgb/train.yaml"
+#INPUT_YAML = "bosh-data/dataset_test_rgb/test.yaml"
+
 
 # the "results" folder is ignored by gitingore
-results = "results/test.record"
+#results = "results/test.record"
+results = "results/train.record"
 
 
 flags = tf.app.flags
