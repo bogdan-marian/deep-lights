@@ -1,11 +1,14 @@
 import tensorflow as tf
 import yaml
 import os
+import sys
+import ntpath
+import exceptions
 from object_detection.utils import dataset_util
 
 
 flags = tf.app.flags
-flags.DEFINE_string('output_path', '', 'Path to output TFRecord')
+flags.DEFINE_string('output_path', './results/bosh.record', 'Path to output TFRecord')
 FLAGS = flags.FLAGS
 
 LABEL_DICT =  {
@@ -24,6 +27,8 @@ LABEL_DICT =  {
     "RedStraightLeft" : 13,
     "RedStraightRight" : 14
     }
+INPUT_YAML = "bosh-data/dataset_test_rgb/test.yaml"
+PATO_TO_IMAGES = "bosh-data/dataset_test_rgb/rgb/test/"
 
 def create_tf_example(example):
 
@@ -31,10 +36,20 @@ def create_tf_example(example):
     height = 720 # Image height
     width = 1280 # Image width
 
-    filename = example['path'] # Filename of the image. Empty if image is not from file
-    filename = filename.encode()
+    temppath = example['path'] # Filename of the image. Empty if image is not from file
+    basename = ntpath.basename(temppath)
+    filename = PATO_TO_IMAGES + basename
 
-    with tf.gfile.GFile(example['path'], 'rb') as fid:
+    if not os.path.exists(filename):
+        print ("file not found: " + filename)
+        dir_path = dir_path = os.path.dirname(os.path.realpath(__file__))
+        print ("current path: " + dir_path)
+        raise Exception("file not found: " + filename)
+
+    filename = filename.encode()
+    print (filename)
+
+    with tf.gfile.GFile(filename, 'rb') as fid:
         encoded_image = fid.read()
 
     image_format = 'png'.encode()
@@ -78,11 +93,11 @@ def create_tf_example(example):
 
 
 def main(_):
-
+    print (FLAGS.output_path)
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
 
     # BOSCH
-    INPUT_YAML = "/home/ubuntu/transfer/dataset_test_rgb.zip.001_FILES/test.yaml"
+
     examples = yaml.load(open(INPUT_YAML, 'rb').read())
 
     #examples = examples[:10]  # for testing
@@ -90,11 +105,14 @@ def main(_):
     print("Loaded ", len(examples), "examples")
 
     for i in range(len(examples)):
+        #i = 8333 threre is a bug
         examples[i]['path'] = os.path.abspath(os.path.join(os.path.dirname(INPUT_YAML), examples[i]['path']))
 
+    print ("DEBUG POINT 1")
     counter = 0
     for example in examples:
         tf_example = create_tf_example(example)
+
         writer.write(tf_example.SerializeToString())
 
         if counter % 10 == 0:

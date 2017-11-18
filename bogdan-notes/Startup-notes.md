@@ -32,4 +32,6 @@ docker tag tensorflow/tensorflow:bogdan-v2 bogdanoloeriu/tensorflow:bogdan-v2
 
 $ docker push bogdanoloeriu/tensorflow:bogdan-v2
 
+nvidia-docker run -it --rm -p 8888:8888 -v `pwd`:/src bogdanoloeriu/tensorflow:bogdan-v2 bash
+
 ```
