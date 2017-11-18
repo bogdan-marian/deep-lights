@@ -5,16 +5,23 @@ import sys
 import ntpath
 import exceptions
 import shutil
+import progressbar
 from object_detection.utils import dataset_util
 
 
 
 
-bosh_data = "bosh-data"
-data_folder = "dataset_train_rgb"
-yaml_file = "train.yaml"
+#bosh_data = "bosh-data"
+#data_folder = "dataset_train_rgb"
+#yaml_file = "train.yaml"
 
-results = "aresults_test/train.record"
+#the fist folder from INPUT_YAML needs to exist in the curent folder
+#the 'bosh-data' folder is ignored by gitingore
+#INPUT_YAML = "bosh-data/dataset_train_rgb/train.yaml"
+INPUT_YAML = "bosh-data/dataset_test_rgb/test.yaml"
+
+# the "results" folder is ignored by gitingore
+results = "results/test.record"
 
 
 flags = tf.app.flags
@@ -34,6 +41,7 @@ def check_file_names():
 
 
     #check the bos-data directory
+    bosh_data = INPUT_YAML.split('/',1)[0]
     if not os.path.exists(bosh_data):
         raise Exception (bosh_data, "directory is missing please download and then continue")
 
@@ -57,7 +65,7 @@ LABEL_DICT =  {
     "RedStraightLeft" : 13,
     "RedStraightRight" : 14
     }
-INPUT_YAML = bosh_data+'/'+data_folder+'/'+ yaml_file
+
 
 #used only for training. the path inside yaml file are scrambled
 #PATO_TO_IMAGES = "bosh-data/dataset_test_rgb/rgb/test/"
@@ -68,11 +76,19 @@ def create_tf_example(example):
     height = 720 # Image height
     width = 1280 # Image width
 
-    #temppath = example['path'] # Filename of the image. Empty if image is not from file
-    #basename = ntpath.basename(temppath)
-    #filename = PATO_TO_IMAGES + basename
+    filename = None
+    if 'test' in INPUT_YAML:
+        test_path = os.path.dirname(INPUT_YAML)
+        test_path += '/rgb/test/'
+        #PATO_TO_IMAGES = "bosh-data/dataset_test_rgb/rgb/test/"
 
-    filename = example['path'] # Filename of the image. Empty if image is not from file
+
+        temppath = example['path'] # Filename of the image. Empty if image is not from file
+        basename = ntpath.basename(temppath)
+        filename = test_path + basename
+
+    if 'train' in INPUT_YAML:
+        filename = example['path'] # Filename of the image. Empty if image is not from file
 
     if not os.path.exists(filename):
         raise Exception("file not found: " + filename)
@@ -131,24 +147,28 @@ def main(_):
 
     #examples = examples[:10]  # for testing
     len_examples = len(examples)
+
     print("Loaded ", len(examples), "examples")
 
     for i in range(len(examples)):
         #i = 8333 threre is a bug
         examples[i]['path'] = os.path.abspath(os.path.join(os.path.dirname(INPUT_YAML), examples[i]['path']))
 
-    print ("DEBUG POINT 1")
+    print ("converting bosh data to google tensor record data")
     counter = 0
+    bar = progressbar.ProgressBar(maxval=len_examples, \
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+    bar.start()
     for example in examples:
         tf_example = create_tf_example(example)
 
         writer.write(tf_example.SerializeToString())
 
-        if counter % 10 == 0:
-            print("Percent done", (counter * 100.0) / len_examples)
         counter += 1
+        bar.update(counter)
 
     writer.close()
+    bar.finish()
 
 
 
