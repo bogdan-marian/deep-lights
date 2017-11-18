@@ -39,3 +39,7 @@ model zoo location
 ```
 /models/research/object_detection/g3doc/detection_model_zoo.md
 ```
+connect new shell to running docker instance
+```
+sudo docker exec -i -t 665b4a1e17b6 /bin/bash #by ID
+```
