@@ -35,3 +35,7 @@ $ docker push bogdanoloeriu/tensorflow:bogdan-v2
 nvidia-docker run -it --rm -p 8888:8888 -v `pwd`:/src bogdanoloeriu/tensorflow:bogdan-v2 bash
 
 ```
+model zoo location
+```
+/models/research/object_detection/g3doc/detection_model_zoo.md
+```
