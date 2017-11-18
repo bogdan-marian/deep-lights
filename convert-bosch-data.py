@@ -4,6 +4,7 @@ import os
 import sys
 import ntpath
 import exceptions
+import shutil
 from object_detection.utils import dataset_util
 
 
@@ -41,13 +42,9 @@ def create_tf_example(example):
     filename = PATO_TO_IMAGES + basename
 
     if not os.path.exists(filename):
-        print ("file not found: " + filename)
-        dir_path = dir_path = os.path.dirname(os.path.realpath(__file__))
-        print ("current path: " + dir_path)
         raise Exception("file not found: " + filename)
 
     filename = filename.encode()
-    print (filename)
 
     with tf.gfile.GFile(filename, 'rb') as fid:
         encoded_image = fid.read()
@@ -93,6 +90,19 @@ def create_tf_example(example):
 
 
 def main(_):
+    results_directory = "results";
+    bosh_data = "bosh-data"
+
+    #reset results directory
+    if os.path.exists(results_directory):
+        shutil.rmtree(results_directory)
+    os.makedirs(results_directory)
+
+    #check the bos-data directory
+    if not os.path.exists(bosh_data):
+        raise Exception ("bosh-data directory is missing please download and then continue")
+
+
     print (FLAGS.output_path)
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
 
@@ -116,7 +126,7 @@ def main(_):
         writer.write(tf_example.SerializeToString())
 
         if counter % 10 == 0:
-            print("Percent done", (counter/len_examples)*100)
+            print("Percent done", (counter * 100.0) / len_examples)
         counter += 1
 
     writer.close()
