@@ -8,7 +8,10 @@
 |initial config file | models/research/object_detection/samples/configs/faster_rcnn_inception_v2_coco.config |
 |initial model tar   | http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2017_11_08.tar.gz |
 |initial train.py    | models/research/object_detection/train.py                            |
+|tensorboard         | an utility that gets installed when you install tensorflow           |
 |export_inference_graph.py| models/research/object_detection/export_inference_graph.py      |
+|labelImg            | https://github.com/tzutalin/labelImg.git                             |
+
 
 
 - create 'training' folder
@@ -28,12 +31,23 @@ python train.py --logtostderr \
   --pipeline_config_path=faster_rcnn_inception_v2_bosh.config
 ```
 
-- copy export_inference_graph.py to 'training' folder
+- use tensorboard to analyze the process from inside the training folder
+```
+tensorboard --logdir=models/train/
+```
+
 - export the inference graph specific to a checkpoint
 ```
 python export_inference_graph.py \
   --input_type image_tensor \
   --pipeline_config_path ./faster_rcnn_inception_v2_bosh.config \
-  --trained_checkpoint_prefix ./models/train/model.ckpt-3647 \
-  --output_directory ./fine_tuned_model
+  --trained_checkpoint_prefix ./models/train/model.ckpt-19478 \
+  --output_directory ./inference_graps/model3
+```
+
+- copy export_inference_graph.py to 'training' folder
+
+- install training data generator utils. from /models/research folder
+```
+python setup.py install
 ```

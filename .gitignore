@@ -4,6 +4,8 @@ results/
 temp/
 fine_tuned_model/
 training/models/train/
+training/inference_graps/
+training/data/
 
 training/data/train.record
 training/models/model.ckpt.data-00000-of-00001
