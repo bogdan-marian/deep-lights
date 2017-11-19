@@ -1,3 +1,10 @@
+#### what is this
+
+This is just a bunch of startup notes that i kept keeping arownd while working
+on creating the deep-light model for Udacity. I ended up like doing hundreds of
+steps and this sheet turned out to be a real time server.
+
+---
 mount the windows drive and then move there
 ```
 cd /media/bogdan/Programare/Bogdan
