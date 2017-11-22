@@ -48,8 +48,3 @@ python export_inference_graph.py \
 ```
 
 - copy export_inference_graph.py to 'training' folder
-
-- install training data generator utils. from /models/research folder
-```
-python setup.py install
-```

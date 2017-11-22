@@ -50,6 +50,10 @@ connect new shell to running docker instance
 ```
 sudo docker exec -i -t 665b4a1e17b6 /bin/bash #by ID
 ```
+- install training data generator utils. from /models/research folder
+```
+python setup.py install
+```
 lounch jupyter as root
 ```
 jupyter notebook --allow-root
