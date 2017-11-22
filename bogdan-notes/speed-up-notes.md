@@ -24,7 +24,7 @@ docker images
 ```
 do some more work
 ```
-jupyter notebook --allow-root
+
 docker commit 5e0dfd671ae6 tensorflow/tensorflow:bogdan-v2
 ```
 
@@ -49,4 +49,16 @@ model zoo location
 connect new shell to running docker instance
 ```
 sudo docker exec -i -t 665b4a1e17b6 /bin/bash #by ID
+```
+lounch jupyter as root
+```
+jupyter notebook --allow-root
+```
+
+tensorflow initialization
+From tensorflow/models/research/
+```
+protoc object_detection/protos/*.proto --python_out=.
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+python object_detection/builders/model_builder_test.py
 ```

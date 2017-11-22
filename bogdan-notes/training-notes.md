@@ -17,7 +17,9 @@
 - create 'training' folder
 - copy the config file into the 'training' folder
 - create 'training/data' folder
-- copy generated 'train.record' in 'training/data' folder
+  - copy generated 'train.record' and testing.record in 'training/data' folder
+  - copy bosh_label_map.pbtxt in 'training/data' folder
+- edit the config file so that it points to the new training and testing record and lable_map
 - download and extract faster_rcnn_inception_v2_coco_2017_11_08.tar.gz file somewhare
 - create 'training/models' folder
 - move the 3 extracted ckpt files in 'training/models'
@@ -35,14 +37,14 @@ python train.py --logtostderr \
 ```
 tensorboard --logdir=models/train/
 ```
-
+- copy export_inference_graph.py to 'training'
 - export the inference graph specific to a checkpoint
 ```
 python export_inference_graph.py \
   --input_type image_tensor \
   --pipeline_config_path ./faster_rcnn_inception_v2_bosh.config \
   --trained_checkpoint_prefix ./models/train/model.ckpt-19478 \
-  --output_directory ./inference_graps/model3
+  --output_directory ./inference_graps
 ```
 
 - copy export_inference_graph.py to 'training' folder

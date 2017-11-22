@@ -23,7 +23,7 @@ INPUT_YAML = "bosh-data/dataset_train_rgb/train.yaml"
 
 # the "results" folder is ignored by gitingore
 #results = "results/test.record"
-results = "results/train.record"
+results = "results/bos-train.record"
 
 
 flags = tf.app.flags
